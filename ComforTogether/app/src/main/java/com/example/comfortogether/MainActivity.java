@@ -1,8 +1,10 @@
 package com.example.comfortogether;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -11,14 +13,16 @@ public class MainActivity extends AppCompatActivity {
 
     RelativeLayout go_play_btn;
     RelativeLayout go_tuto_btn;
-
+    private static final int REQUEST_CAMERA_PERMISSION = 1234;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int a = 0;
-        int b=0;
+        // 카메라 권한 체크
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
 
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
@@ -41,4 +45,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

@@ -46,14 +46,12 @@
         android:textAlignment="center"
         android:orientation="vertical">
 
-        <Button
+        <TextureView
             android:layout_margin="10dp"
             android:layout_weight="1"
+            android:id="@+id/textureView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/rec1"
-            android:text="Camera"
-            android:textColor="@color/black"/>
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 
