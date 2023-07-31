@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TutorialActivity"
+    android:background="@color/bg_color"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:layout_width="121dp"
+        android:layout_height="52dp"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="설명"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/test2"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"
+        android:text="기본 사용 설명서에 대한 설명 " />
+
+</LinearLayout>
