@@ -80,7 +80,7 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case R.id.vibration_btn:
-                PlayVibration();
+                PlayVibration(1000,100);
                 break;
 
             case R.id.ml_brn:
@@ -219,7 +219,7 @@ public class PlayActivity extends AppCompatActivity {
             openCamera();
         }
     }
-    private void PlaySound() {
+    void PlaySound() {
         if(mediaPlayer == null){
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.ringtone_1);
             mediaPlayer.start();
@@ -230,9 +230,9 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    private void PlayVibration() {
+    void PlayVibration(int millisec, int amplitude) {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(1000,100));
+        vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
     private void PlayML() {
 

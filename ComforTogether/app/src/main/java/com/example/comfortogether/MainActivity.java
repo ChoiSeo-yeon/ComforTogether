@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -13,6 +14,9 @@ public class MainActivity extends AppCompatActivity {
 
     RelativeLayout go_play_btn;
     RelativeLayout go_tuto_btn;
+
+    MediaPlayer main_mediaPlayer;
+    boolean is_playing;
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
-
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
 
@@ -39,12 +42,23 @@ public class MainActivity extends AppCompatActivity {
         go_tuto_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //PlaySound();
                 Intent go_tuto_intent = new Intent(MainActivity.this,TutorialActivity.class);
                 startActivity(go_tuto_intent);
                 //finish();
             }
         });
     }
-
+    void PlaySound() {
+        if(main_mediaPlayer == null){
+            main_mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tuto_btnclick_sound);
+            main_mediaPlayer.start();
+            is_playing = true;
+        }else{
+            main_mediaPlayer.stop();
+            main_mediaPlayer = null;
+            is_playing = false;
+        }
+    }
 
 }

@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,172 +18,74 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.viewpager.widget.ViewPager;
 
+import java.util.List;
+
 public class TutorialActivity extends AppCompatActivity {
+    RelativeLayout tutorial_rl;
+    TextView tutorial_tv;
 
-    private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
-    private LinearLayout dotsLayout;
-    private TextView[] dots;
-    private int[] layouts;
-    private Button btnSkip, btnNext;
-
+    MediaPlayer tuto_mediaPlayer;
+    int tuto_num = 0;
+    //MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
         setContentView(R.layout.activity_tutorial);
-        viewPager = findViewById(R.id.view_pager);
-        dotsLayout = findViewById(R.id.layoutDots);
-        btnSkip = findViewById(R.id.btn_skip);
-        btnNext = findViewById(R.id.btn_next);
 
-        layouts = new int[]{
-                R.layout.tutorial_page1,
-                R.layout.tutorial_page2,
-                R.layout.tutorial_page3,
-                R.layout.tutorial_page4
-        };
+        tutorial_rl = findViewById(R.id.tutorial_rl);
+        tutorial_tv = findViewById(R.id.tutorial_tv);
+        PlaySound(R.raw.tuto_purpose);
+        tuto_num = 0;
+        int[] tuto_mp3 = {R.raw.tuto_sound0,R.raw.tuto_sound1,R.raw.tuto_sound2,R.raw.tuto_sound3,R.raw.tuto_sound4,R.raw.tuto_sound5,R.raw.tuto_sound6};
+        String[] tuto_string = {
+                "앱 실행 시 카메라 센서를 사용하기 위해 권한을 받습니다.",
+                "핸드폰의 후면 카메라를 통해 주변 정보를 받습니다.",
+                "장애물이 전방에 존재할 떄 강한 진동이 울리고 점자블럭을 벗어날 경우 약한 진동이 울립니다",
+                "장애물 감지를 진동과 음성으로 동시에 듣고 싶은 경우 앱 화면 맨 아래부분에 디스플레이를 클릭합니다.",
+                "음성으로 정보 안내를 시작합니다 라는 음성과 함께 음성 장애물 감지 모드가 실행됩니다.",
+                "튜토리얼을 마쳤습니다, 곧 실행을 위해 홈 화면으로 이동합니다"};
 
-        // 하단 점 추가
-        addBottomDots(0);
-
-        // 알림 표시줄을 투명하게 만들기
-        changeStatusBarColor();
-
-        pagerAdapter = new PagerAdapter();
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-
-
-        // 건너띄기 버튼 클릭시 메인화면으로 이동
-        btnSkip.setOnClickListener(new View.OnClickListener() {
+        tutorial_rl.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TutorialActivity.this, MainActivity.class));
-                finish();
-            }
-        });
+            public void onClick(View view) {
+                if(tuto_num < 6){
+                    tutorial_tv.setText(tuto_string[tuto_num]);
+                    PlaySound(tuto_mp3[tuto_num]);
+                    if(tuto_num == 2){
 
-        // 조건문을 통해 버튼 하나로 두개의 상황을 실행
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    // 마지막 페이지가 아니라면 다음 페이지로 이동
-                    viewPager.setCurrentItem(current);
-                } else {
-                    // 마지막 페이지라면 메인페이지로 이동
-                    startActivity(new Intent(TutorialActivity.this, MainActivity.class));
+                        PlayVibration(2000,255);
+                        //PlayVibration(1000,0);
+                        //PlayVibration(2000,150);
+                    }
+                }else{
+                    tuto_num = 0;
+                    if(tuto_mediaPlayer != null){
+                        tuto_mediaPlayer.stop();
+                        tuto_mediaPlayer = null;
+                    }
                     finish();
                 }
+                tuto_num ++;
             }
         });
     }
-
-    // 하단 점(선택된 점, 선택되지 않은 점) 구현
-    private void addBottomDots(int currentPage) {
-        dots = new TextView[layouts.length]; // 레이아웃 크기만큼 하단 점 배열에 추가
-
-        int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
-        int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
-
-        dotsLayout.removeAllViews();
-        for (int i = 0; i < dots.length; i++) {
-            dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
-            dots[i].setTextSize(35);
-            dots[i].setTextColor(colorsInactive[currentPage]);
-            dotsLayout.addView(dots[i]);
-        }
-
-        if (dots.length > 0)
-            dots[currentPage].setTextColor(colorsActive[currentPage]);
-    }
-
-    private int getItem(int i) {
-        return viewPager.getCurrentItem() + i;
-    }
-
-    // 뷰페이저 변경 리스너
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(int position) {
-            addBottomDots(position);
-
-            // 다음 / 시작 버튼 바꾸기
-            if (position == layouts.length - 1) {
-                // 마지막 페이지에서는 다음 버튼을 시작버튼으로 교체
-                btnNext.setText(getString(R.string.start)); // 다음 버튼을 시작버튼으로 글자 교체
-                btnSkip.setVisibility(View.GONE);
-            } else {
-
-                // 마지막 페이지가 아니라면 다음과 건너띄기 버튼 출력
-                btnNext.setText(getString(R.string.next));
-                btnSkip.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) {
-
-        }
-    };
-
-    // 알림 표시줄을 투명하게 만들기
-    private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
+    void PlaySound(int sound) {
+        if(tuto_mediaPlayer == null){
+            tuto_mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
+            tuto_mediaPlayer.start();
+        }else{
+            tuto_mediaPlayer.stop();
+            tuto_mediaPlayer = null;
+            PlaySound(sound);
         }
     }
-
-    // 호출기 어댑터
-    public class PagerAdapter extends androidx.viewpager.widget.PagerAdapter {
-        private LayoutInflater layoutInflater;
-
-        public PagerAdapter() {
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View view = layoutInflater.inflate(layouts[position], container, false);
-            container.addView(view);
-
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return layouts.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object obj) {
-            return view == obj;
-        }
-
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
-        }
+    void PlayVibration(int millisec, int amplitude) {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
 }
