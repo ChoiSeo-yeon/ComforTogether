@@ -33,7 +33,7 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 public class PlayActivity extends AppCompatActivity {
-
+    private int CAMARA = 10;
     ImageButton close_play_btn;
     Button sound_btn;
     Button vibration_btn;
