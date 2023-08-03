@@ -371,34 +371,37 @@ public class PlayActivity extends AppCompatActivity {
     }
     void tts_label(String tts){
         Log.d("label string","model label : "+tts);
-        switch (tts){
+        while 
+        switch (tts) {
             case "bus":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_bus, false);
                 break;
-
             case "car":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_car, false);
                 break;
 
             case "skateboard":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_skateboard, false);
                 break;
 
             case "sports ball":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_sports_ball, false);
                 break;
 
             case "person":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_person, false);
                 break;
 
             case "traffic light":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_traffic, false);
                 break;
 
             case "truck":
-                PlaySound(R.raw.play_sound1,false);
+                PlaySound(R.raw.label_truck, false);
                 break;
+
+        }
+
         }
     }
 
@@ -442,4 +445,3 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
      */
-}
