@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PlaySound(R.raw.main_sound1);
+        PlaySound(R.raw.main_sound2);
+
 
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
 
+
+
         //sy 황성민 ttl 위쪽누르면 실행 아래면 튜토리얼
         // 1) 어플을 실행하려면 정 중앙을 기준으로 윗부분을, 2) 튜토리얼을 실행하시려면 정중앙을 기준으로 아랫부분을 눌러주세요
         //main_sound1, mainsound2
@@ -38,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PlaySound(R.raw.tuto_btnclick_sound); //sy 황성민 ttl 실행버튼눌렀을때 ttl
+                PlaySound(R.raw.play_btnclick_sound); //sy 황성민 ttl 실행버튼눌렀을때 ttl
                 try {
                     Thread.sleep(3500);
                 } catch (InterruptedException e) {
