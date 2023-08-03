@@ -181,6 +181,11 @@ public class PlayActivity extends AppCompatActivity {
         ml_thread.start() ;
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     public void onclick(View view) {
         switch (view.getId()) {
             case R.id.close_play_btn:

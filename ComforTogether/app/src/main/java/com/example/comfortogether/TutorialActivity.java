@@ -63,16 +63,16 @@ public class TutorialActivity extends AppCompatActivity {
                         //PlayVibration(2000,150);
                     }
                 }else{
-                    tuto_num = 0;
-                    if(tuto_mediaPlayer != null){
-                        tuto_mediaPlayer.stop();
-                        tuto_mediaPlayer = null;
-                    }
-                    finish();
+                    finish_playactivity();
                 }
                 tuto_num ++;
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish_playactivity();
     }
     void PlaySound(int sound) {
         if(tuto_mediaPlayer == null){
@@ -88,4 +88,15 @@ public class TutorialActivity extends AppCompatActivity {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
+
+    void finish_playactivity(){
+        tuto_num = 0;
+        if(tuto_mediaPlayer != null){
+            tuto_mediaPlayer.stop();
+            tuto_mediaPlayer = null;
+        }
+        finish();
+    }
+
+
 }

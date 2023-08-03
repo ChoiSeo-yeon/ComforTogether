@@ -30,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
 
-        //sy 황성민 ttl
+        //sy 황성민 ttl 위쪽누르면 실행 아래면 튜토리얼인거
 
         go_play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PlaySound(R.raw.tuto_btnclick_sound); //sy 황성민 ttl
+                PlaySound(R.raw.tuto_btnclick_sound); //sy 황성민 ttl 실행버튼눌렀을때 ttl
                 try {
                     Thread.sleep(3500);
                 } catch (InterruptedException e) {
