@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PlayActivity extends AppCompatActivity implements Runnable {
+public class PlayActivity extends AppCompatActivity {
     private int CAMARA = 10;
     ImageButton close_play_btn;
     Button sound_btn;
@@ -130,6 +130,50 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
         }
 
         initTextureView();
+
+
+        class MLRunnable implements Runnable {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+                        e.printStackTrace() ;
+                    }
+                    mBitmap = mTextureView.getBitmap();
+
+                    mImgScaleX = (float)mBitmap.getWidth() / PrePostProcessor.mInputWidth;
+                    mImgScaleY = (float)mBitmap.getHeight() / PrePostProcessor.mInputHeight;
+
+                    mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float)mTextureView.getWidth() / mBitmap.getWidth() : (float)mTextureView.getHeight() / mBitmap.getHeight());
+                    mIvScaleY  = (mBitmap.getHeight() > mBitmap.getWidth() ? (float)mTextureView.getHeight() / mBitmap.getHeight() : (float)mTextureView.getWidth() / mBitmap.getWidth());
+
+                    mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
+                    mStartY = (mTextureView.getHeight() -  mIvScaleY * mBitmap.getHeight())/2;
+
+                    mStartX = (mBitmap.getWidth()  - mIvScaleX * mBitmap.getWidth())  / 2;
+                    mStartY = (mBitmap.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
+
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
+                    final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
+                    IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
+                    final Tensor outputTensor = outputTuple[0].toTensor();
+                    final float[] outputs = outputTensor.getDataAsFloatArray();
+                    final ArrayList<Result> results = PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
+
+                    runOnUiThread(() -> {
+                        resultView.setResults(results);
+                        resultView.invalidate();
+                        resultView.setVisibility(View.VISIBLE);
+                        System.out.println("Thread run done");
+                    });
+                }
+            }
+        }
+        MLRunnable ml_runnable = new MLRunnable() ;
+        Thread ml_thread = new Thread(ml_runnable) ;
+        ml_thread.start() ;
     }
 
     public void onclick(View view) {
@@ -149,7 +193,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
                 break;
 
             case R.id.ml_brn:
-                PlayML();
+                //PlayML();
                 break;
 
             case R.id.sound_onoff_btn:
@@ -310,6 +354,8 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
+
+    /*
     private void PlayML() {
         mBitmap = mTextureView.getBitmap();
 
@@ -346,4 +392,5 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
             System.out.println("Thread run done");
         });
     }
+     */
 }

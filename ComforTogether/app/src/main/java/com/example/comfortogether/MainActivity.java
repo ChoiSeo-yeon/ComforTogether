@@ -30,9 +30,17 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
 
+        //sy 황성민 ttl
+
         go_play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                PlaySound(R.raw.tuto_btnclick_sound); //sy 황성민 ttl
+                try {
+                    Thread.sleep(3500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 Intent go_main_intent = new Intent(MainActivity.this,PlayActivity.class);
                 startActivity(go_main_intent);
                 //finish();
@@ -42,16 +50,21 @@ public class MainActivity extends AppCompatActivity {
         go_tuto_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //PlaySound();
+                PlaySound(R.raw.tuto_btnclick_sound);
+                try {
+                    Thread.sleep(3500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 Intent go_tuto_intent = new Intent(MainActivity.this,TutorialActivity.class);
                 startActivity(go_tuto_intent);
                 //finish();
             }
         });
     }
-    void PlaySound() {
+    void PlaySound(int main_sound) {
         if(main_mediaPlayer == null){
-            main_mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.tuto_btnclick_sound);
+            main_mediaPlayer = MediaPlayer.create(getApplicationContext(), main_sound);
             main_mediaPlayer.start();
             is_playing = true;
         }else{
