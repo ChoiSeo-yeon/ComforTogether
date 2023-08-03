@@ -49,8 +49,11 @@ public class ResultView extends View {
         if (mResults == null) return;
         for (Result result : mResults) {
 
-            if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
+            if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false){
+                //sy 황성민 tts playActivity로 라벨 이름 눌러서 그쪽에서 음성으로 나오게
                 continue;
+            }
+
 
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
