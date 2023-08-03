@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PlaySound(R.raw.main_sound1);
-        PlaySound(R.raw.main_sound2);
+        PlaySound(R.raw.app_start_sound);
 
 
         // 카메라 권한 체크
@@ -69,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 //finish();
             }
         });
+
+        PlaySound(R.raw.app_start_sound);
     }
     void PlaySound(int main_sound) {
         if(main_mediaPlayer == null){
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             main_mediaPlayer.stop();
             main_mediaPlayer = null;
             is_playing = false;
+            PlaySound(main_sound);
         }
     }
 

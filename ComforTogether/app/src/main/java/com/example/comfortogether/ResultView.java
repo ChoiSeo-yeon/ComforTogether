@@ -21,6 +21,8 @@ import java.util.Arrays;
 
 public class ResultView extends View {
 
+    PlayActivity playActivity = new PlayActivity();
+
     private final static int TEXT_X = 40;
     private final static int TEXT_Y = 35;
     private final static int TEXT_WIDTH = 260;
@@ -51,9 +53,9 @@ public class ResultView extends View {
 
             if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false){
                 //sy 황성민 tts playActivity로 라벨 이름 눌러서 그쪽에서 음성으로 나오게
+                playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex]);
                 continue;
             }
-
 
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
