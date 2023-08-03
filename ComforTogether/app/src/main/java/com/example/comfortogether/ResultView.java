@@ -1,11 +1,4 @@
-// Copyright (c) 2020 Facebook, Inc. and its affiliates.
-// All rights reserved.
-//
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree.
-
 package com.example.comfortogether;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -51,10 +44,10 @@ public class ResultView extends View {
         if (mResults == null) return;
         for (Result result : mResults) {
 
-            if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false){
-                //sy 황성민 tts playActivity로 라벨 이름 눌러서 그쪽에서 음성으로 나오게
-                playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex]);
+            if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
                 continue;
+
+            playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex]);
 
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
