@@ -58,6 +58,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
     Button sound_btn;
     Button vibration_btn;
     Button ml_brn;
+    Button sound_onoff_btn;
 
     MediaPlayer mediaPlayer;
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
@@ -71,6 +72,8 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
     private Module mModule;
     private Bitmap mBitmap;
     private float mImgScaleX, mImgScaleY, mIvScaleX=1, mIvScaleY=1, mStartX, mStartY;
+
+    boolean sound_onoff = false;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
@@ -99,6 +102,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
         close_play_btn = findViewById(R.id.close_play_btn);
         sound_btn = findViewById(R.id.sound_btn);
         vibration_btn = findViewById(R.id.vibration_btn);
+        sound_onoff_btn = findViewById(R.id.sound_onoff_btn);
         ml_brn = findViewById(R.id.ml_brn);
         resultView = findViewById(R.id.rView);
 
@@ -137,7 +141,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
                 break;
 
             case R.id.sound_btn:
-                PlaySound();
+                PlaySound(R.raw.ringtone_1);
                 break;
 
             case R.id.vibration_btn:
@@ -146,6 +150,15 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
 
             case R.id.ml_brn:
                 PlayML();
+                break;
+
+            case R.id.sound_onoff_btn:
+                sound_onoff = !sound_onoff;
+                if(sound_onoff){
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
+                }else{
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
+                }
                 break;
 
             default:
@@ -280,14 +293,16 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
             openCamera();
         }
     }
-    void PlaySound() {
-        if(mediaPlayer == null){
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.ringtone_1);
-            mediaPlayer.start();
-        }else{
-            mediaPlayer.stop();
-            mediaPlayer = null;
-            //PlaySound();
+    void PlaySound(int sound) {
+        if(sound_onoff){
+            if(mediaPlayer == null){
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
+                mediaPlayer.start();
+            }else{
+                mediaPlayer.stop();
+                mediaPlayer = null;
+                //PlaySound(sound);
+            }
         }
     }
 
