@@ -197,7 +197,7 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case R.id.sound_btn:
-                PlaySound(R.raw.ringtone_1);
+                PlaySound(R.raw.ringtone_1,true);
                 break;
 
             case R.id.vibration_btn:
@@ -250,7 +250,6 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
     }
-    protected TextToSpeech tts;
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -350,8 +349,8 @@ public class PlayActivity extends AppCompatActivity {
             openCamera();
         }
     }
-    void PlaySound(int sound) {
-        if(sound_onoff){
+    void PlaySound(int sound, boolean explanation) {
+        if(sound_onoff || explanation){
             if(mediaPlayer == null){
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
                 mediaPlayer.start();
@@ -361,6 +360,7 @@ public class PlayActivity extends AppCompatActivity {
                 //PlaySound(sound);
             }
         }
+
     }
 
     void PlayVibration(int millisec, int amplitude) {
