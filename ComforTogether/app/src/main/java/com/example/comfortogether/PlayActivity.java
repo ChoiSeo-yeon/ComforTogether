@@ -1,5 +1,7 @@
 package com.example.comfortogether;
 
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -23,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -74,7 +77,6 @@ public class PlayActivity extends AppCompatActivity {
     private float mImgScaleX, mImgScaleY, mIvScaleX=1, mIvScaleY=1, mStartX, mStartY;
 
     boolean sound_onoff = false;
-
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
         if (file.exists() && file.length() > 0) {
@@ -247,7 +249,8 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
     }
-
+    protected TextToSpeech tts;
+    @
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -364,6 +367,8 @@ public class PlayActivity extends AppCompatActivity {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
+
+
 
     /*
     private void PlayML() {

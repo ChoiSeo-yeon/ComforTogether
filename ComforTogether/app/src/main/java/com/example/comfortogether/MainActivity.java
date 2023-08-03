@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn = findViewById(R.id.go_play_btn);
         go_tuto_btn = findViewById(R.id.go_tuto_btn);
 
-        //sy 황성민 ttl 위쪽누르면 실행 아래면 튜토리얼인거
+        //sy 황성민 ttl 위쪽누르면 실행 아래면 튜토리얼
+        // 1) 어플을 실행하려면 정 중앙을 기준으로 윗부분을, 2) 튜토리얼을 실행하시려면 정중앙을 기준으로 아랫부분을 눌러주세요
+        //main_sound1, mainsound2
 
         go_play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
