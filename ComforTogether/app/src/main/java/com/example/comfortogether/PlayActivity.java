@@ -359,7 +359,7 @@ public class PlayActivity extends AppCompatActivity {
             }else{
                 mediaPlayer.stop();
                 mediaPlayer = null;
-                //PlaySound(sound);
+                PlaySound(sound,false);
             }
         }
 
@@ -369,9 +369,37 @@ public class PlayActivity extends AppCompatActivity {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
-
     void tts_label(String tts){
         Log.d("label string","model label : "+tts);
+        switch (tts){
+            case "bus":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "car":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "skateboard":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "sports ball":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "person":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "traffic light":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+
+            case "truck":
+                PlaySound(R.raw.play_sound1,false);
+                break;
+        }
     }
 
 
