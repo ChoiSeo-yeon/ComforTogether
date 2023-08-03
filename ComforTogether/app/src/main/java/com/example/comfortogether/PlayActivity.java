@@ -209,6 +209,7 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case R.id.sound_onoff_btn:
+                //sy 황성민 ttl
                 sound_onoff = !sound_onoff;
                 if(sound_onoff){
                     //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
