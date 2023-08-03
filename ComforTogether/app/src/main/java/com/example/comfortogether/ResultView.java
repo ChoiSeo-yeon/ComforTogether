@@ -29,7 +29,7 @@ public class ResultView extends View {
     private Paint mPaintRectangle;
     private Paint mPaintText;
     private ArrayList<Result> mResults;
-    private String[] labelFilter = new String[]{"bus", "bicycle", "car", "skateboard", "sports ball", "person", "traffic light", "truck"};
+    private String[] labelFilter = new String[]{"bus", "bicycle", "car", "skateboard", "sports ball", "person", "traffic light", "truck"}; //sy 황성민 ttl "'라벨안에있는거'를 조심하세요"
 
     public ResultView(Context context) {
         super(context);
