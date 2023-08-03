@@ -28,6 +28,7 @@ import java.util.List;
 public class TutorialActivity extends AppCompatActivity {
     RelativeLayout tutorial_rl;
     TextView tutorial_tv;
+    TextView tuto_title;
 
     MediaPlayer tuto_mediaPlayer;
     int tuto_num = 0;
@@ -39,6 +40,7 @@ public class TutorialActivity extends AppCompatActivity {
 
         tutorial_rl = findViewById(R.id.tutorial_rl);
         tutorial_tv = findViewById(R.id.tutorial_tv);
+        tuto_title = findViewById(R.id.tutorial_title);
         PlaySound(R.raw.tuto_purpose);
         tuto_num = 0;
         int[] tuto_mp3 = {R.raw.tuto_sound0,R.raw.tuto_sound1,R.raw.tuto_sound2,R.raw.tuto_sound3,R.raw.tuto_sound4,R.raw.tuto_sound5,R.raw.tuto_sound6};
@@ -50,14 +52,23 @@ public class TutorialActivity extends AppCompatActivity {
                 "음성으로 정보 안내를 시작합니다 라는 음성과 함께 음성 장애물 감지 모드가 실행됩니다.",
                 "튜토리얼을 마쳤습니다, 곧 실행을 위해 홈 화면으로 이동합니다"};
 
+        String[] tuto_title_string = {
+                "[ 앱 권한 ]",
+                "[ 앱 안내 ]",
+                "[ 점자블럭 - 진동 ]",
+                "[ 장애물 - 소리 ]",
+                "[ 장애물 감지 모드 ]",
+                "[ 튜토리얼 완료 ]"
+        };
+
         tutorial_rl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(tuto_num < 6){
                     tutorial_tv.setText(tuto_string[tuto_num]);
+                    tuto_title.setText(tuto_title_string[tuto_num]);
                     PlaySound(tuto_mp3[tuto_num]);
                     if(tuto_num == 2){
-
                         PlayVibration(2000,255);
                         //PlayVibration(1000,0);
                         //PlayVibration(2000,150);
