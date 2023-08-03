@@ -251,7 +251,6 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
     protected TextToSpeech tts;
-    @
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
