@@ -74,6 +74,7 @@ public class PlayActivity extends AppCompatActivity {
     private float mImgScaleX, mImgScaleY, mIvScaleX=1, mIvScaleY=1, mStartX, mStartY;
 
     boolean sound_onoff = false;
+    private LineDetecter mlineDetecter;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
@@ -129,6 +130,8 @@ public class PlayActivity extends AppCompatActivity {
             Log.e("Object detection", "Error:", e);
         }
 
+        mlineDetecter = new LineDetecter();
+
         initTextureView();
 
 
@@ -172,6 +175,12 @@ public class PlayActivity extends AppCompatActivity {
                             resultView.setVisibility(View.VISIBLE);
                             Log.d("Object Detection", "Thread run done");
                         });
+                    }
+
+                    try {
+                        Bitmap lineBitmap = mlineDetecter.DetectingLine(mBitmap);
+                    } catch (Exception e) {
+                        Log.e("OpenCV", "SDK Load fail");
                     }
                 }
             }
