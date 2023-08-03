@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class ResultView extends View {
@@ -28,6 +29,7 @@ public class ResultView extends View {
     private Paint mPaintRectangle;
     private Paint mPaintText;
     private ArrayList<Result> mResults;
+    private String[] labelFilter = new String[]{"bus", "bicycle", "car", "skateboard", "sports ball", "person", "traffic light", "truck"};
 
     public ResultView(Context context) {
         super(context);
@@ -45,7 +47,12 @@ public class ResultView extends View {
         super.onDraw(canvas);
 
         if (mResults == null) return;
+
         for (Result result : mResults) {
+            // 우리가 표시 하고자 하는 사물이 아니면 이미지 표시 안하고 무시
+            if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
+                continue;
+
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
             canvas.drawRect(result.rect, mPaintRectangle);

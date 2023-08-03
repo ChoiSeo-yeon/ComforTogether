@@ -324,11 +324,16 @@ public class PlayActivity extends AppCompatActivity implements Runnable {
         final float[] outputs = outputTensor.getDataAsFloatArray();
         final ArrayList<Result> results = PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
 
-        runOnUiThread(() -> {
-            resultView.setResults(results);
-            resultView.invalidate();
-            resultView.setVisibility(View.VISIBLE);
-            System.out.println("Thread run done");
-        });
+        if (results.isEmpty()) {
+            resultView.setVisibility(View.INVISIBLE);
+            Log.d("Object Detection", "Detection Done. But, there's no object");
+        } else {
+            runOnUiThread(() -> {
+                resultView.setResults(results);
+                resultView.invalidate();
+                resultView.setVisibility(View.VISIBLE);
+                Log.d("Object Detection", "Thread run done");
+            });
+        }
     }
 }
