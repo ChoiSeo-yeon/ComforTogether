@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PlaySound(R.raw.main_sound1);
-        PlaySound(R.raw.main_sound2);
+        PlaySound(R.raw.app_start_sound);
 
 
         // 카메라 권한 체크

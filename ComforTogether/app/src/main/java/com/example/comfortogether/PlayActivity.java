@@ -213,10 +213,10 @@ public class PlayActivity extends AppCompatActivity {
                 sound_onoff = !sound_onoff;
                 if(sound_onoff){
                     //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound1);
+                    PlaySound(R.raw.play_sound1,true);
                 }else{
                     //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound2);
+                    PlaySound(R.raw.play_sound2,true);
                 }
                 break;
 
@@ -368,6 +368,10 @@ public class PlayActivity extends AppCompatActivity {
     void PlayVibration(int millisec, int amplitude) {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
+    }
+
+    void tts_label(String tts){
+        Log.d("label string","model label : "+tts);
     }
 
 
