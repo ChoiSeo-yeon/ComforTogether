@@ -371,7 +371,11 @@ public class PlayActivity extends AppCompatActivity {
     }
     void tts_label(String tts){
         Log.d("label string","model label : "+tts);
+<<<<<<< Updated upstream
         while 
+=======
+
+>>>>>>> Stashed changes
         switch (tts) {
             case "bus":
                 PlaySound(R.raw.label_bus, false);
@@ -402,8 +406,13 @@ public class PlayActivity extends AppCompatActivity {
 
         }
 
+<<<<<<< Updated upstream
         }
     }
+=======
+    }
+}
+>>>>>>> Stashed changes
 
 
 
@@ -443,5 +452,10 @@ public class PlayActivity extends AppCompatActivity {
             resultView.setVisibility(View.VISIBLE);
             System.out.println("Thread run done");
         });
+<<<<<<< Updated upstream
     }
      */
+=======
+
+     */
+>>>>>>> Stashed changes

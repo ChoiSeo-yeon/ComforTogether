@@ -6,18 +6,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+
+import org.opencv.android.OpenCVLoader;
+
 
 public class IntroActivity extends AppCompatActivity {
 
     ImageView intro_iv;
+    private static String Tag_log = "OpenCV Test:";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
+        if (OpenCVLoader.initDebug()){
+            Log.d(Tag_log, "OpenCV init");
+        } else{
+            Log.d(Tag_log, "OpenCV Not Init");
+        }
         intro_iv = findViewById(R.id.intro_iv);
 
         intro_iv.setOnClickListener(new View.OnClickListener() {

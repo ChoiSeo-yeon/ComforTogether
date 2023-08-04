@@ -8,6 +8,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.example.comfortogether.PlayActivity;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,7 +17,10 @@ import java.util.Arrays;
 public class ResultView extends View {
 
     PlayActivity playActivity = new PlayActivity();
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     private final static int TEXT_X = 40;
     private final static int TEXT_Y = 35;
     private final static int TEXT_WIDTH = 260;
@@ -48,7 +53,10 @@ public class ResultView extends View {
                 continue;
 
             playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex]);
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
             canvas.drawRect(result.rect, mPaintRectangle);
