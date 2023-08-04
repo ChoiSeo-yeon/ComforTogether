@@ -379,19 +379,20 @@ public class PlayActivity extends AppCompatActivity {
 
     void PlaySound(int sound, boolean explanation) {
 
-        Log.d("label string", "PlaySound ");
+        Log.d("label string", "PlaySound " + sound_onoff);
 
-        if (mediaPlayer == null) {
-            Log.d("label string", "mediaPlayer == null ");
-            mediaPlayer = MediaPlayer.create(acontext, sound);
-            mediaPlayer.start();
-        } else {
-            Log.d("label string", "else ");
-            mediaPlayer.stop();
-            mediaPlayer = null;
-            PlaySound(sound, false);
+        if(sound_onoff){
+            if (mediaPlayer == null) {
+                Log.d("label string", "mediaPlayer == null ");
+                mediaPlayer = MediaPlayer.create(acontext, sound);
+                mediaPlayer.start();
+            } else {
+                Log.d("label string", "else ");
+                mediaPlayer.stop();
+                mediaPlayer = null;
+                PlaySound(sound, false);
+            }
         }
-
     }
 
     void PlayVibration(int millisec, int amplitude) {
@@ -400,7 +401,6 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     void tts_label(String tts) {
-        Log.d("label string", sound_onoff+"model label : " + tts);
         switch (tts) {
             case "bus":
                 PlaySound(R.raw.label_bus, false);
@@ -429,9 +429,6 @@ public class PlayActivity extends AppCompatActivity {
             case "truck":
                 PlaySound(R.raw.label_truck, false);
                 break;
-
-        }
-        if (sound_onoff) {
 
         }
     }
