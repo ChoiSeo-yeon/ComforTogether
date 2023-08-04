@@ -381,7 +381,7 @@ public class PlayActivity extends AppCompatActivity {
 
         Log.d("label string", "PlaySound " + sound_onoff);
 
-        if(sound_onoff){
+        if(sound_onoff || explanation){
             if (mediaPlayer == null) {
                 Log.d("label string", "mediaPlayer == null ");
                 mediaPlayer = MediaPlayer.create(acontext, sound);
