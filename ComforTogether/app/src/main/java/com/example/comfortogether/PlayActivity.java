@@ -118,20 +118,7 @@ public class PlayActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             return;
         }
-        sound_onoff_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (sound_onoff == false) {
-                    sound_onoff = true;
-                    //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound1, true);
-                } else {
-                    sound_onoff = false;
-                    //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound2, true);
-                }
-            }
-        });
+
         // yolo 모델 불러오기
         try {
             String str;
