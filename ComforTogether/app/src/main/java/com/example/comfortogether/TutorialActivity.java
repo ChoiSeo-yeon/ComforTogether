@@ -40,7 +40,7 @@ public class TutorialActivity extends AppCompatActivity {
 
         tutorial_rl = findViewById(R.id.tutorial_rl);
         tutorial_tv = findViewById(R.id.tutorial_tv);
-        tuto_title = findViewById(R.id.tutorial_title);
+        tuto_title = findViewById(R.id.tutorial_ti);
         PlaySound(R.raw.tuto_purpose);
         tuto_num = 0;
         int[] tuto_mp3 = {R.raw.tuto_sound0,R.raw.tuto_sound1,R.raw.tuto_sound2,R.raw.tuto_sound3,R.raw.tuto_sound4,R.raw.tuto_sound5,R.raw.tuto_sound6};

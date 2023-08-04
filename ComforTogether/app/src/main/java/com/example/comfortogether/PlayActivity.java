@@ -78,10 +78,13 @@ public class PlayActivity extends AppCompatActivity {
     private Bitmap mBitmap;
     private float mImgScaleX, mImgScaleY, mIvScaleX = 1, mIvScaleY = 1, mStartX, mStartY;
 
-    boolean sound_onoff = false;
     private LineDetecter mlineDetecter;
+    public boolean sound_onoff = false;
+    private static Context acontext;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
+
+        acontext = context;
         File file = new File(context.getFilesDir(), assetName);
         if (file.exists() && file.length() > 0) {
             return file.getAbsolutePath();
@@ -105,6 +108,8 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
+        acontext = getApplicationContext();
+        mediaPlayer = new MediaPlayer();
         close_play_btn = findViewById(R.id.close_play_btn);
         sound_btn = findViewById(R.id.sound_btn);
         vibration_btn = findViewById(R.id.vibration_btn);
@@ -118,7 +123,20 @@ public class PlayActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             return;
         }
-
+        sound_onoff_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sound_onoff == false) {
+                    sound_onoff = true;
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
+                    PlaySound(R.raw.play_sound1, true);
+                } else {
+                    sound_onoff = false;
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
+                    PlaySound(R.raw.play_sound2, true);
+                }
+            }
+        });
         // yolo 모델 불러오기
         try {
             String str;
@@ -146,7 +164,7 @@ public class PlayActivity extends AppCompatActivity {
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -196,6 +214,8 @@ public class PlayActivity extends AppCompatActivity {
         MLRunnable ml_runnable = new MLRunnable();
         Thread ml_thread = new Thread(ml_runnable);
         ml_thread.start();
+
+
     }
 
     @Override
@@ -225,11 +245,13 @@ public class PlayActivity extends AppCompatActivity {
 
             case R.id.sound_onoff_btn:
                 //sy 황성민 ttl
-                sound_onoff = !sound_onoff;
-                if (sound_onoff) {
+                //sound_onoff = !sound_onoff;
+                if (sound_onoff == false) {
+                    sound_onoff = true;
                     //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
                     PlaySound(R.raw.play_sound1, true);
                 } else {
+                    sound_onoff = false;
                     //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
                     PlaySound(R.raw.play_sound2, true);
                 }
@@ -369,15 +391,18 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     void PlaySound(int sound, boolean explanation) {
-        if (sound_onoff || explanation) {
-            if (mediaPlayer == null) {
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
-                mediaPlayer.start();
-            } else {
-                mediaPlayer.stop();
-                mediaPlayer = null;
-                PlaySound(sound, false);
-            }
+
+        Log.d("label string", "PlaySound ");
+
+        if (mediaPlayer == null) {
+            Log.d("label string", "mediaPlayer == null ");
+            mediaPlayer = MediaPlayer.create(acontext, sound);
+            mediaPlayer.start();
+        } else {
+            Log.d("label string", "else ");
+            mediaPlayer.stop();
+            mediaPlayer = null;
+            PlaySound(sound, false);
         }
 
     }
@@ -388,8 +413,7 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     void tts_label(String tts) {
-        Log.d("label string", "model label : " + tts);
-
+        Log.d("label string", sound_onoff+"model label : " + tts);
         switch (tts) {
             case "bus":
                 PlaySound(R.raw.label_bus, false);
@@ -407,6 +431,7 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case "person":
+                Log.d("label string", "person");
                 PlaySound(R.raw.label_person, false);
                 break;
 
@@ -417,6 +442,9 @@ public class PlayActivity extends AppCompatActivity {
             case "truck":
                 PlaySound(R.raw.label_truck, false);
                 break;
+
+        }
+        if (sound_onoff) {
 
         }
     }
