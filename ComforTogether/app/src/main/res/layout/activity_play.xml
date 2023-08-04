@@ -11,6 +11,7 @@
 
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_weight="0.4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -24,23 +25,25 @@
             android:gravity="center_vertical"
             android:text="ComforTogether 실행 화면"
             android:textSize="17dp"
-            android:textColor="#3C3C3C"/>
+            android:textColor="#F57C00"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
         <ImageButton
             android:id="@+id/close_play_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:src="@mipmap/ic_launcher"
+            android:layout_marginRight="5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:foregroundGravity="right"
+            android:layout_gravity="bottom"
+            android:background="@drawable/close_btn_img"
             android:onClick="onclick"/>
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_weight="5.6"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_weight="6"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:textAlignment="center"
@@ -53,9 +56,42 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <com.example.comfortogether.ResultView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/rView" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lineImage"
+            android:visibility="invisible"
+            android:layout_margin="10dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textAlignment="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/sound_onoff_btn"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rec1"
+            android:text="음성 장애물 감지 모드"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:onClick="onclick"/>
     </LinearLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"

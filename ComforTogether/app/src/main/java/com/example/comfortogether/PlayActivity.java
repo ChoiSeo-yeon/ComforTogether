@@ -1,5 +1,7 @@
 package com.example.comfortogether;
 
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -7,6 +9,8 @@ import androidx.core.app.ActivityCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -21,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -28,9 +33,28 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.pytorch.IValue;
+import org.pytorch.LiteModuleLoader;
+import org.pytorch.Module;
+import org.pytorch.Tensor;
+import org.pytorch.torchvision.TensorImageUtils;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PlayActivity extends AppCompatActivity {
     private int CAMARA = 10;
@@ -38,33 +62,152 @@ public class PlayActivity extends AppCompatActivity {
     Button sound_btn;
     Button vibration_btn;
     Button ml_brn;
+    Button sound_onoff_btn;
 
     MediaPlayer mediaPlayer;
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
     private TextureView mTextureView;
+    private ResultView resultView;
+    private ImageView lineImgView;
 
     private CameraDevice mCamera;
     private Size mPreviewSize;
     private CameraCaptureSession mCameraSession;
     private CaptureRequest.Builder mCaptureRequestBuilder;
+    private Module mModule;
+    private Bitmap mBitmap;
+    private float mImgScaleX, mImgScaleY, mIvScaleX = 1, mIvScaleY = 1, mStartX, mStartY;
+
+    private LineDetecter mlineDetecter;
+    public boolean sound_onoff = false;
+    private static Context acontext;
+
+    public static String assetFilePath(Context context, String assetName) throws IOException {
+
+        acontext = context;
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
+
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
+        acontext = getApplicationContext();
+        mediaPlayer = new MediaPlayer();
         close_play_btn = findViewById(R.id.close_play_btn);
         sound_btn = findViewById(R.id.sound_btn);
         vibration_btn = findViewById(R.id.vibration_btn);
+        sound_onoff_btn = findViewById(R.id.sound_onoff_btn);
         ml_brn = findViewById(R.id.ml_brn);
+        resultView = findViewById(R.id.rView);
+        lineImgView = findViewById(R.id.lineImage);
 
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             return;
         }
 
+        // yolo 모델 불러오기
+        try {
+            String str;
+            List<String> classes = new ArrayList<>();
+
+            mModule = LiteModuleLoader.load(PlayActivity.assetFilePath(getApplicationContext(), "best.torchscript.ptl"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open("coco.txt")));
+
+            while ((str = bufferedReader.readLine()) != null)
+                classes.add(str);
+
+            PrePostProcessor.mClasses = new String[classes.size()];
+            classes.toArray(PrePostProcessor.mClasses);
+        } catch (Exception e) {
+            Log.e("Object detection", "Error:", e);
+        }
+
+        mlineDetecter = new LineDetecter();
+
         initTextureView();
+
+
+        class MLRunnable implements Runnable {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    mBitmap = mTextureView.getBitmap();
+
+                    mImgScaleX = (float) mBitmap.getWidth() / PrePostProcessor.mInputWidth;
+                    mImgScaleY = (float) mBitmap.getHeight() / PrePostProcessor.mInputHeight;
+
+                    mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float) mTextureView.getWidth() / mBitmap.getWidth() : (float) mTextureView.getHeight() / mBitmap.getHeight());
+                    mIvScaleY = (mBitmap.getHeight() > mBitmap.getWidth() ? (float) mTextureView.getHeight() / mBitmap.getHeight() : (float) mTextureView.getWidth() / mBitmap.getWidth());
+
+                    mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth()) / 2;
+                    mStartY = (mTextureView.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
+
+                    mStartX = (mBitmap.getWidth() - mIvScaleX * mBitmap.getWidth()) / 2;
+                    mStartY = (mBitmap.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
+
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
+                    final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
+                    IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
+                    final Tensor outputTensor = outputTuple[0].toTensor();
+                    final float[] outputs = outputTensor.getDataAsFloatArray();
+                    final ArrayList<Result> results = PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
+
+                    if (results.isEmpty()) {
+                        resultView.setVisibility(View.INVISIBLE);
+                        Log.d("Object Detection", "Detection Done. But, there's no object");
+                    } else {
+                        runOnUiThread(() -> {
+                            resultView.setResults(results);
+                            resultView.invalidate();
+                            resultView.setVisibility(View.VISIBLE);
+                            Log.d("Object Detection", "Thread run done");
+                        });
+                    }
+
+                    try {
+                        Bitmap lineBitmap = mlineDetecter.DetectingLine(mBitmap);
+                        lineImgView.setImageBitmap(lineBitmap);
+                        lineImgView.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        lineImgView.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
+        MLRunnable ml_runnable = new MLRunnable();
+        Thread ml_thread = new Thread(ml_runnable);
+        ml_thread.start();
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     public void onclick(View view) {
@@ -76,15 +219,29 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case R.id.sound_btn:
-                PlaySound();
+                PlaySound(R.raw.ringtone_1, true);
                 break;
 
             case R.id.vibration_btn:
-                PlayVibration(1000,100);
+                PlayVibration(1000, 100);
                 break;
 
             case R.id.ml_brn:
-                PlayML();
+                //PlayML();
+                break;
+
+            case R.id.sound_onoff_btn:
+                //sy 황성민 ttl
+                //sound_onoff = !sound_onoff;
+                if (sound_onoff == false) {
+                    sound_onoff = true;
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
+                    PlaySound(R.raw.play_sound1, true);
+                } else {
+                    sound_onoff = false;
+                    //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
+                    PlaySound(R.raw.play_sound2, true);
+                }
                 break;
 
             default:
@@ -219,24 +376,106 @@ public class PlayActivity extends AppCompatActivity {
             openCamera();
         }
     }
-    void PlaySound() {
-        if(mediaPlayer == null){
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.ringtone_1);
+
+    void PlaySound(int sound, boolean explanation) {
+
+        Log.d("label string", "PlaySound ");
+
+        if (mediaPlayer == null) {
+            Log.d("label string", "mediaPlayer == null ");
+            mediaPlayer = MediaPlayer.create(acontext, sound);
             mediaPlayer.start();
-        }else{
+        } else {
+            Log.d("label string", "else ");
             mediaPlayer.stop();
             mediaPlayer = null;
-            //PlaySound();
+            PlaySound(sound, false);
         }
+
     }
 
     void PlayVibration(int millisec, int amplitude) {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
-    private void PlayML() {
 
+    void tts_label(String tts) {
+        Log.d("label string", sound_onoff+"model label : " + tts);
+        switch (tts) {
+            case "bus":
+                PlaySound(R.raw.label_bus, false);
+                break;
+            case "car":
+                PlaySound(R.raw.label_car, false);
+                break;
+
+            case "skateboard":
+                PlaySound(R.raw.label_skateboard, false);
+                break;
+
+            case "sports ball":
+                PlaySound(R.raw.label_sports_ball, false);
+                break;
+
+            case "person":
+                Log.d("label string", "person");
+                PlaySound(R.raw.label_person, false);
+                break;
+
+            case "traffic light":
+                PlaySound(R.raw.label_traffic, false);
+                break;
+
+            case "truck":
+                PlaySound(R.raw.label_truck, false);
+                break;
+
+        }
+        if (sound_onoff) {
+
+        }
+    }
+}
+
+
+
+    /*
+    private void PlayML() {
+        mBitmap = mTextureView.getBitmap();
+
+        mImgScaleX = (float)mBitmap.getWidth() / PrePostProcessor.mInputWidth;
+        mImgScaleY = (float)mBitmap.getHeight() / PrePostProcessor.mInputHeight;
+
+        mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float)mTextureView.getWidth() / mBitmap.getWidth() : (float)mTextureView.getHeight() / mBitmap.getHeight());
+        mIvScaleY  = (mBitmap.getHeight() > mBitmap.getWidth() ? (float)mTextureView.getHeight() / mBitmap.getHeight() : (float)mTextureView.getWidth() / mBitmap.getWidth());
+
+        mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
+        mStartY = (mTextureView.getHeight() -  mIvScaleY * mBitmap.getHeight())/2;
+
+        mStartX = (mBitmap.getWidth()  - mIvScaleX * mBitmap.getWidth())  / 2;
+        mStartY = (mBitmap.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
+
+        Thread thread = new Thread(PlayActivity.this);
+        thread.start();
     }
 
 
-}
+    @Override
+    public void run() {
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
+        final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
+        IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
+        final Tensor outputTensor = outputTuple[0].toTensor();
+        final float[] outputs = outputTensor.getDataAsFloatArray();
+        final ArrayList<Result> results = PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
+
+        runOnUiThread(() -> {
+            resultView.setResults(results);
+            resultView.invalidate();
+            resultView.setVisibility(View.VISIBLE);
+            System.out.println("Thread run done");
+        });
+<<<<<<< Updated upstream
+    }
+     */
+
