@@ -96,6 +96,9 @@ public class LineDetecter {
         mask.release();
         hierarchy.release();
 
+        if (maxContour == null)
+            throw new Exception();
+
         return resBitmap;
     }
 }
