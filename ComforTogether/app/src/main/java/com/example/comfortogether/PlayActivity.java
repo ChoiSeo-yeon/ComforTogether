@@ -242,6 +242,7 @@ public class PlayActivity extends AppCompatActivity {
                     //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
                     PlaySound(R.raw.play_sound2, true);
                 }
+                Log.d("sound", "sount_onoff:" + sound_onoff);
                 break;
 
             default:
@@ -390,7 +391,7 @@ public class PlayActivity extends AppCompatActivity {
                 Log.d("label string", "else ");
                 mediaPlayer.stop();
                 mediaPlayer = null;
-                PlaySound(sound, false);
+                PlaySound(sound, explanation || sound_onoff);
             }
         }
     }
