@@ -74,9 +74,10 @@ public class PlayActivity extends AppCompatActivity {
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private Module mModule;
     private Bitmap mBitmap;
-    private float mImgScaleX, mImgScaleY, mIvScaleX=1, mIvScaleY=1, mStartX, mStartY;
+    private float mImgScaleX, mImgScaleY, mIvScaleX = 1, mIvScaleY = 1, mStartX, mStartY;
 
     boolean sound_onoff = false;
+
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
         if (file.exists() && file.length() > 0) {
@@ -110,7 +111,7 @@ public class PlayActivity extends AppCompatActivity {
 
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             return;
         }
 
@@ -141,20 +142,20 @@ public class PlayActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(500);
                     } catch (Exception e) {
-                        e.printStackTrace() ;
+                        e.printStackTrace();
                     }
                     mBitmap = mTextureView.getBitmap();
 
-                    mImgScaleX = (float)mBitmap.getWidth() / PrePostProcessor.mInputWidth;
-                    mImgScaleY = (float)mBitmap.getHeight() / PrePostProcessor.mInputHeight;
+                    mImgScaleX = (float) mBitmap.getWidth() / PrePostProcessor.mInputWidth;
+                    mImgScaleY = (float) mBitmap.getHeight() / PrePostProcessor.mInputHeight;
 
-                    mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float)mTextureView.getWidth() / mBitmap.getWidth() : (float)mTextureView.getHeight() / mBitmap.getHeight());
-                    mIvScaleY  = (mBitmap.getHeight() > mBitmap.getWidth() ? (float)mTextureView.getHeight() / mBitmap.getHeight() : (float)mTextureView.getWidth() / mBitmap.getWidth());
+                    mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float) mTextureView.getWidth() / mBitmap.getWidth() : (float) mTextureView.getHeight() / mBitmap.getHeight());
+                    mIvScaleY = (mBitmap.getHeight() > mBitmap.getWidth() ? (float) mTextureView.getHeight() / mBitmap.getHeight() : (float) mTextureView.getWidth() / mBitmap.getWidth());
 
-                    mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
-                    mStartY = (mTextureView.getHeight() -  mIvScaleY * mBitmap.getHeight())/2;
+                    mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth()) / 2;
+                    mStartY = (mTextureView.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
 
-                    mStartX = (mBitmap.getWidth()  - mIvScaleX * mBitmap.getWidth())  / 2;
+                    mStartX = (mBitmap.getWidth() - mIvScaleX * mBitmap.getWidth()) / 2;
                     mStartY = (mBitmap.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
 
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
@@ -178,9 +179,9 @@ public class PlayActivity extends AppCompatActivity {
                 }
             }
         }
-        MLRunnable ml_runnable = new MLRunnable() ;
-        Thread ml_thread = new Thread(ml_runnable) ;
-        ml_thread.start() ;
+        MLRunnable ml_runnable = new MLRunnable();
+        Thread ml_thread = new Thread(ml_runnable);
+        ml_thread.start();
     }
 
     @Override
@@ -197,11 +198,11 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
             case R.id.sound_btn:
-                PlaySound(R.raw.ringtone_1,true);
+                PlaySound(R.raw.ringtone_1, true);
                 break;
 
             case R.id.vibration_btn:
-                PlayVibration(1000,100);
+                PlayVibration(1000, 100);
                 break;
 
             case R.id.ml_brn:
@@ -211,12 +212,12 @@ public class PlayActivity extends AppCompatActivity {
             case R.id.sound_onoff_btn:
                 //sy 황성민 ttl
                 sound_onoff = !sound_onoff;
-                if(sound_onoff){
+                if (sound_onoff) {
                     //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound1,true);
-                }else{
+                    PlaySound(R.raw.play_sound1, true);
+                } else {
                     //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
-                    PlaySound(R.raw.play_sound2,true);
+                    PlaySound(R.raw.play_sound2, true);
                 }
                 break;
 
@@ -252,6 +253,7 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
     }
+
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -351,15 +353,16 @@ public class PlayActivity extends AppCompatActivity {
             openCamera();
         }
     }
+
     void PlaySound(int sound, boolean explanation) {
-        if(sound_onoff || explanation){
-            if(mediaPlayer == null){
+        if (sound_onoff || explanation) {
+            if (mediaPlayer == null) {
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), sound);
                 mediaPlayer.start();
-            }else{
+            } else {
                 mediaPlayer.stop();
                 mediaPlayer = null;
-                PlaySound(sound,false);
+                PlaySound(sound, false);
             }
         }
 
@@ -369,13 +372,10 @@ public class PlayActivity extends AppCompatActivity {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
-    void tts_label(String tts){
-        Log.d("label string","model label : "+tts);
-<<<<<<< Updated upstream
-        while 
-=======
 
->>>>>>> Stashed changes
+    void tts_label(String tts) {
+        Log.d("label string", "model label : " + tts);
+
         switch (tts) {
             case "bus":
                 PlaySound(R.raw.label_bus, false);
@@ -405,14 +405,8 @@ public class PlayActivity extends AppCompatActivity {
                 break;
 
         }
-
-<<<<<<< Updated upstream
-        }
-    }
-=======
     }
 }
->>>>>>> Stashed changes
 
 
 
@@ -455,7 +449,4 @@ public class PlayActivity extends AppCompatActivity {
 <<<<<<< Updated upstream
     }
      */
-=======
 
-     */
->>>>>>> Stashed changes
