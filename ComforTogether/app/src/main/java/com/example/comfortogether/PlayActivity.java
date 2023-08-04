@@ -33,6 +33,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class PlayActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
     private TextureView mTextureView;
     private ResultView resultView;
+    private ImageView lineImgView;
 
     private CameraDevice mCamera;
     private Size mPreviewSize;
@@ -109,6 +111,7 @@ public class PlayActivity extends AppCompatActivity {
         sound_onoff_btn = findViewById(R.id.sound_onoff_btn);
         ml_brn = findViewById(R.id.ml_brn);
         resultView = findViewById(R.id.rView);
+        lineImgView = findViewById(R.id.lineImage);
 
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -182,8 +185,10 @@ public class PlayActivity extends AppCompatActivity {
 
                     try {
                         Bitmap lineBitmap = mlineDetecter.DetectingLine(mBitmap);
+                        lineImgView.setImageBitmap(lineBitmap);
+                        lineImgView.setVisibility(View.VISIBLE);
                     } catch (Exception e) {
-                        Log.e("OpenCV", "SDK Load fail");
+                        lineImgView.setVisibility(View.INVISIBLE);
                     }
                 }
             }

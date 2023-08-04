@@ -66,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/lineImage"
+            android:visibility="invisible"
             android:layout_margin="10dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
