@@ -9,7 +9,6 @@ import androidx.core.app.ActivityCompat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -21,11 +20,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -34,7 +31,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.pytorch.IValue;
@@ -44,14 +40,12 @@ import org.pytorch.Tensor;
 import org.pytorch.torchvision.TensorImageUtils;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -201,8 +195,6 @@ public class PlayActivity extends AppCompatActivity {
         MLRunnable ml_runnable = new MLRunnable();
         Thread ml_thread = new Thread(ml_runnable);
         ml_thread.start();
-
-
     }
 
     @Override
@@ -242,6 +234,7 @@ public class PlayActivity extends AppCompatActivity {
                     //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
                     PlaySound(R.raw.play_sound2, true);
                 }
+                resultView.Sound_swich();
                 Log.d("sound", "sount_onoff:" + sound_onoff);
                 break;
 
@@ -382,17 +375,15 @@ public class PlayActivity extends AppCompatActivity {
 
         Log.d("label string", "PlaySound " + sound_onoff);
 
-        if(sound_onoff || explanation){
-            if (mediaPlayer == null) {
-                Log.d("label string", "mediaPlayer == null ");
-                mediaPlayer = MediaPlayer.create(acontext, sound);
-                mediaPlayer.start();
-            } else {
-                Log.d("label string", "else ");
-                mediaPlayer.stop();
-                mediaPlayer = null;
-                PlaySound(sound, explanation || sound_onoff);
-            }
+        if (mediaPlayer == null) {
+            Log.d("label string", "mediaPlayer == null ");
+            mediaPlayer = MediaPlayer.create(acontext, sound);
+            mediaPlayer.start();
+        } else {
+            Log.d("label string", "else ");
+            mediaPlayer.stop();
+            mediaPlayer = null;
+            PlaySound(sound, explanation || sound_onoff);
         }
     }
 
@@ -401,36 +392,37 @@ public class PlayActivity extends AppCompatActivity {
         vibrator.vibrate(VibrationEffect.createOneShot(millisec, amplitude));
     }
 
-    void tts_label(String tts) {
-        switch (tts) {
-            case "bus":
-                PlaySound(R.raw.label_bus, false);
-                break;
-            case "car":
-                PlaySound(R.raw.label_car, false);
-                break;
+    void tts_label(String tts, boolean sound_is) {
+        if(sound_is){
+            switch (tts) {
+                case "bus":
+                    PlaySound(R.raw.label_bus, false);
+                    break;
+                case "car":
+                    PlaySound(R.raw.label_car, false);
+                    break;
 
-            case "skateboard":
-                PlaySound(R.raw.label_skateboard, false);
-                break;
+                case "skateboard":
+                    PlaySound(R.raw.label_skateboard, false);
+                    break;
 
-            case "sports ball":
-                PlaySound(R.raw.label_sports_ball, false);
-                break;
+                case "sports ball":
+                    PlaySound(R.raw.label_sports_ball, false);
+                    break;
 
-            case "person":
-                Log.d("label string", "person");
-                PlaySound(R.raw.label_person, false);
-                break;
+                case "person":
+                    Log.d("label string", "person");
+                    PlaySound(R.raw.label_person, false);
+                    break;
 
-            case "traffic light":
-                PlaySound(R.raw.label_traffic, false);
-                break;
+                case "traffic light":
+                    PlaySound(R.raw.label_traffic, false);
+                    break;
 
-            case "truck":
-                PlaySound(R.raw.label_truck, false);
-                break;
-
+                case "truck":
+                    PlaySound(R.raw.label_truck, false);
+                    break;
+            }
         }
     }
 }

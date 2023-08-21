@@ -15,6 +15,8 @@ import java.util.Arrays;
 
 
 public class ResultView extends View {
+    
+    private boolean sound_is = false;
 
     PlayActivity playActivity = new PlayActivity();
     private final static int TEXT_X = 40;
@@ -38,6 +40,10 @@ public class ResultView extends View {
         mPaintText = new Paint();
     }
 
+    public void Sound_swich(){
+        this.sound_is = !sound_is;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -47,8 +53,7 @@ public class ResultView extends View {
 
             if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
                 continue;
-
-            playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex]);
+            playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
 
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
