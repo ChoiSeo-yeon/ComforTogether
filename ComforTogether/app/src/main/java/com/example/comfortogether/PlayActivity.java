@@ -10,6 +10,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -21,6 +25,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -33,6 +38,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.pytorch.IValue;
 import org.pytorch.LiteModuleLoader;
 import org.pytorch.Module;
@@ -41,6 +55,7 @@ import org.pytorch.torchvision.TensorImageUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -172,6 +187,8 @@ public class PlayActivity extends AppCompatActivity {
 
                     if (results.isEmpty()) {
                         resultView.setVisibility(View.INVISIBLE);
+                        Log.d("Size", "width" + mBitmap.getWidth());
+                        Log.d("Size", "height" + mBitmap.getHeight());
                         Log.d("Object Detection", "Detection Done. But, there's no object");
                     } else {
                         runOnUiThread(() -> {
@@ -181,7 +198,11 @@ public class PlayActivity extends AppCompatActivity {
                             Log.d("Object Detection", "Thread run done");
                         });
                     }
-
+                    try {
+                        grayscale(mBitmap);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                     try {
                         Bitmap lineBitmap = mlineDetecter.DetectingLine(mBitmap);
                         lineImgView.setImageBitmap(lineBitmap);
@@ -196,12 +217,80 @@ public class PlayActivity extends AppCompatActivity {
         Thread ml_thread = new Thread(ml_runnable);
         ml_thread.start();
     }
-
     @Override
     public void onBackPressed() {
         finish();
     }
+    public void grayscale(final Bitmap orgBitmap) {
+        int width, height;
+        width = orgBitmap.getWidth();
+        height = orgBitmap.getHeight();
+        int histWidth = 1020;
+        int histHeight = 2083;
+        int histSize = 256;
 
+        Bitmap bmpGrayScale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+        try {
+            Mat grayScale = new Mat();
+            Utils.bitmapToMat(bmpGrayScale, grayScale);
+
+            List<Mat> bgrPlanes = new ArrayList<>();
+            Core.split(grayScale, bgrPlanes);
+            boolean accumlate = false;
+
+
+            float[] range = {0, 256};
+            MatOfFloat histRange = new MatOfFloat(range);
+            Mat iHist = new Mat();
+            Imgproc.calcHist(bgrPlanes, new MatOfInt(0), new Mat(), iHist, new MatOfInt(histSize), histRange, accumlate);
+            int binW = (int) Math.round((double) histWidth / histSize);
+
+            Mat Histimage = new Mat(histHeight, histWidth, CvType.CV_8UC3, new Scalar(0, 0, 0));
+            Core.normalize(iHist, iHist, 0, Histimage.rows(), Core.NORM_MINMAX);
+            float[] iHistData = new float[(int) (iHist.total() * iHist.channels())];
+            iHist.get(0, 0, iHistData);
+
+            for (int i = 1; i < histSize; i++) {
+                Imgproc.line(Histimage, new Point(binW * (i - 1), histHeight - Math.round(iHistData[i - 1])), new Point(binW * (i), histHeight - Math.round(iHistData[i])), new Scalar(255, 255, 255), 1);
+
+            }
+            Utils.matToBitmap(Histimage, bmpGrayScale);
+
+            Log.d("Histdata", "Histdata" + Histimage);
+            /*saveImage(bmpGrayScale, "Picture", "1");
+
+*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+/*
+    public static void saveImage(Bitmap bitmap, String folder, String name){
+        String file_name = name+".jpg";
+        String string_path = "/strorage/emulated/0/Documents/";
+
+        File file_path;
+        try {
+            file_path = new File(string_path);
+            if (!file_path.isDirectory()) {
+                file_path.mkdir();
+            }
+
+            FileOutputStream out = new FileOutputStream(string_path + file_name);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+        } catch (FileNotFoundException exception) {
+            Log.e("FileNotFoundException", exception.getMessage());
+        } catch (IOException exception) {
+            Log.e("IOException", exception.getMessage());
+        }
+
+
+    }
+
+*/
     public void onclick(View view) {
         switch (view.getId()) {
             case R.id.close_play_btn:
@@ -225,6 +314,9 @@ public class PlayActivity extends AppCompatActivity {
             case R.id.sound_onoff_btn:
                 //sy 황성민 ttl
                 //sound_onoff = !sound_onoff;
+                //mBitmap = mTextureView.getBitmap();
+                //grayscale(mBitmap);
+
                 if (sound_onoff == false) {
                     sound_onoff = true;
                     //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."

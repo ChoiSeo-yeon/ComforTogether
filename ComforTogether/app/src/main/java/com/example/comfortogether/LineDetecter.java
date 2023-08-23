@@ -29,6 +29,7 @@ public class LineDetecter {
     private Scalar colorBlobLower = new Scalar(0, 52, 175);
     private Scalar colorBlobUpper = new Scalar(0, 255, 255);
 
+
     public LineDetecter() {
         if (OpenCVLoader.initDebug()) {
             isInitialized = true;
