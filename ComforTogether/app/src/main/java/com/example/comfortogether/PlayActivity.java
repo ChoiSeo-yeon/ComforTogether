@@ -223,38 +223,33 @@ public class PlayActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
+    ArrayList<Boolean> histo_count = new ArrayList<>();
     public void grayscale(final Bitmap orgBitmap) {
         int width, height;
         width = orgBitmap.getWidth();
         height = orgBitmap.getHeight();
-        int histWidth = 1020;
-        int histHeight = 2083;
         int histSize = 256;
 
         Bitmap bmpGrayScale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         try {
+            boolean tf = false;
             Mat grayScale = new Mat();
             Utils.bitmapToMat(orgBitmap, grayScale);
             List<Mat> bgrPlanes = new ArrayList<>();
             Core.split(grayScale, bgrPlanes);
             boolean accumlate = false;
 
-
             float[] range = {0, 256};
             MatOfFloat histRange = new MatOfFloat(range);
             Mat iHist = new Mat();
             Imgproc.calcHist(bgrPlanes, new MatOfInt(0), new Mat(), iHist, new MatOfInt(histSize), histRange, accumlate);
-            int binW = (int) Math.round((double) histWidth / histSize);
+            int binW = (int) Math.round((double) width / histSize);
 
-            Mat Histimage = new Mat(histHeight, histWidth, CvType.CV_8UC3, new Scalar(0, 0, 0));
+            Mat Histimage = new Mat(height, width, CvType.CV_8UC3, new Scalar(0, 0, 0));
             Core.normalize(iHist, iHist, 0, Histimage.rows(), Core.NORM_MINMAX);
             float[] iHistData = new float[(int) (iHist.total() * iHist.channels())];
             iHist.get(0, 0, iHistData);
 
-            for (int i = 1; i < histSize; i++) {
-                Imgproc.line(Histimage, new Point(binW * (i - 1), histHeight - Math.round(iHistData[i - 1])), new Point(binW * (i), histHeight - Math.round(iHistData[i])), new Scalar(255, 255, 255), 1);
-
-            }
             Utils.matToBitmap(Histimage, bmpGrayScale);
 
             Log.d("Histdata", "Histdata" + Histimage);
@@ -262,11 +257,50 @@ public class PlayActivity extends AppCompatActivity {
             SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH-mm-ss z");
             Date date = new Date(System.currentTimeMillis());
             saveBitmapToJpeg(bmpGrayScale,formatter.format(date));
-
+            double sum = 0;
             for (int i = 0; i < iHistData.length; i++) {
-                System.out.println("HIST Date : " + i + " : " + iHistData[i]);
+                sum += iHistData[i];
             }
-            /*saveImage(bmpGrayScale, "Picture", "1");*/
+            double[] persent = new double[256];
+            for (int i = 0; i < iHistData.length; i++) {
+                persent[i] = (iHistData[i]/sum)*100;
+                Log.d("HISTOGRAM","HIST Date : " + i + " : " + persent[i]);
+            }
+
+            for (int i = 0; i < 255; i++) {
+                double sum_per = 0;
+                for (int j = 0; j < 20; j++) {
+                    sum_per += persent[i];
+                }
+                if(sum_per > 80){
+                    Log.d("HISTOGRAM","HERE IS FINISH");
+                    tf = true;
+                    break;
+                }
+            }
+
+
+            if(histo_count.size() > 4){
+                histo_count.set(4,tf);
+
+                int is = 0;
+                for (int i = 0; i < histo_count.size()-1; i++) {
+                    if(histo_count.get(i)){
+                        is++;
+                    }
+                }
+                if(is>=3){
+                    //화면 돌아감요
+                    Log.d("화면","돌아감");
+                }else{
+                    Log.d("화면","안 돌아감");
+                }
+                for (int i = 1; i < histo_count.size()-1; i++) {
+                    histo_count.set(i-1,histo_count.get(i));
+                }
+            }else{
+                histo_count.add(tf);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,31 +325,6 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-/*
-    public static void saveImage(Bitmap bitmap, String folder, String name){
-        String file_name = name+".jpg";
-        String string_path = "/strorage/emulated/0/Documents/";
-
-        File file_path;
-        try {
-            file_path = new File(string_path);
-            if (!file_path.isDirectory()) {
-                file_path.mkdir();
-            }
-
-            FileOutputStream out = new FileOutputStream(string_path + file_name);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
-        } catch (FileNotFoundException exception) {
-            Log.e("FileNotFoundException", exception.getMessage());
-        } catch (IOException exception) {
-            Log.e("IOException", exception.getMessage());
-        }
-
-
-    }
-
-*/
     public void onclick(View view) {
         switch (view.getId()) {
             case R.id.close_play_btn:
