@@ -280,7 +280,11 @@ public class PlayActivity extends AppCompatActivity {
             }
 
 
+
             if(histo_count.size() > 4){
+                for (int i = 1; i < histo_count.size(); i++) {
+                    histo_count.set(i-1,histo_count.get(i));
+                }
                 histo_count.set(4,tf);
 
                 int is = 0;
@@ -295,11 +299,11 @@ public class PlayActivity extends AppCompatActivity {
                 }else{
                     Log.d("화면","안 돌아감");
                 }
-                for (int i = 1; i < histo_count.size()-1; i++) {
-                    histo_count.set(i-1,histo_count.get(i));
-                }
+                Log.d("tf","tf >4 : "+Arrays.toString(histo_count.toArray()));
+
             }else{
                 histo_count.add(tf);
+                Log.d("tf","tf <4 : "+Arrays.toString(histo_count.toArray()));
             }
 
         } catch (Exception e) {
