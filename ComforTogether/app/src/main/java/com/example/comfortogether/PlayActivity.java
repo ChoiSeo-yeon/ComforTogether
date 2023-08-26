@@ -61,8 +61,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class PlayActivity extends AppCompatActivity {
@@ -232,8 +234,7 @@ public class PlayActivity extends AppCompatActivity {
         Bitmap bmpGrayScale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         try {
             Mat grayScale = new Mat();
-            Utils.bitmapToMat(bmpGrayScale, grayScale);
-
+            Utils.bitmapToMat(orgBitmap, grayScale);
             List<Mat> bgrPlanes = new ArrayList<>();
             Core.split(grayScale, bgrPlanes);
             boolean accumlate = false;
@@ -257,15 +258,39 @@ public class PlayActivity extends AppCompatActivity {
             Utils.matToBitmap(Histimage, bmpGrayScale);
 
             Log.d("Histdata", "Histdata" + Histimage);
-            /*saveImage(bmpGrayScale, "Picture", "1");
 
-*/
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH-mm-ss z");
+            Date date = new Date(System.currentTimeMillis());
+            saveBitmapToJpeg(bmpGrayScale,formatter.format(date));
+
+            for (int i = 0; i < iHistData.length; i++) {
+                System.out.println("HIST Date : " + i + " : " + iHistData[i]);
+            }
+            /*saveImage(bmpGrayScale, "Picture", "1");*/
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    private void saveBitmapToJpeg(Bitmap bitmap, String name) {
+
+        File storage = getCacheDir();
+        String fileName = name + ".jpg";
+        File tempFile = new File(storage, fileName);
+        try {
+            tempFile.createNewFile();
+            FileOutputStream out = new FileOutputStream(tempFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            Log.e("MyTag","FileNotFoundException : " + e.getMessage());
+        } catch (IOException e) {
+            Log.e("MyTag","IOException : " + e.getMessage());
+        }
+    }
+
 /*
     public static void saveImage(Bitmap bitmap, String folder, String name){
         String file_name = name+".jpg";
