@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:background="#878787"
+    android:background="@color/def"
     android:padding="20dp"
     >
 
@@ -17,10 +17,11 @@
         android:text="ComforTogether"
         android:textSize="30dp"
         android:textStyle="bold"
-        android:textColor="#FF9100"
+        android:textColor="#FFB202"
         android:textAlignment="center"/>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/go_play_btn"
         android:layout_weight="1"
         android:layout_margin="20dp"
@@ -37,13 +38,57 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
             android:text="실  행"
+            android:textColor="@color/white"
             android:textSize="50dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textStyle="bold" />
 
     </RelativeLayout>
+
+    <soup.neumorphism.NeumorphCardView
+        android:id="@+id/neumorphCardView2"
+        android:layout_weight="1"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/bmi_button"
+        app:neumorph_shapeType="flat"
+        tools:layout_editor_absoluteX="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bmi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/black"
+                    android:textSize="40sp"
+                    android:text="실 행"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFB202"
+                    android:textSize="40sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </soup.neumorphism.NeumorphCardView>
 
     <RelativeLayout
         android:id="@+id/go_tuto_btn"
@@ -66,7 +111,7 @@
             android:text="튜토리얼"
             android:textSize="50dp"
             android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 
