@@ -2,8 +2,11 @@ package com.example.comfortogether;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
@@ -26,9 +30,7 @@ import java.util.List;
 public class LineDetecter {
     private boolean isInitialized = false;
     private static String tag = "OpenCV";
-    private Scalar colorBlobLower = new Scalar(0, 52, 175);
-    private Scalar colorBlobUpper = new Scalar(0, 255, 255);
-
+    private Mat oldLines;
 
     public LineDetecter() {
         if (OpenCVLoader.initDebug()) {
@@ -39,67 +41,75 @@ public class LineDetecter {
         }
     }
 
-    public Bitmap DetectingLine(@NonNull Bitmap bitmap) throws Exception {
-        if (!isInitialized)
-            throw new Exception();
+    public Bitmap DetectingLine(@NonNull Bitmap bitmap) {
+        Mat frame = new Mat();
+        Utils.bitmapToMat(bitmap, frame);
 
-        Mat rgba = new Mat();
-        Utils.bitmapToMat(bitmap, rgba);
+        // 이미지 가공
+        Imgproc.resize(frame, frame, new Size(0, 0), 0.3, 0.3, Imgproc.INTER_AREA);
 
+        // 컬러 컨버팅
         Mat hsv = new Mat();
-        Imgproc.cvtColor(rgba, hsv, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
 
-        Mat mask = new Mat();
-        Core.inRange(hsv, colorBlobLower, colorBlobUpper, mask);
+        // 라인 디텍팅
+        Scalar lowerYellow1 = new Scalar(0, 52, 175);
+        Scalar upperYellow1 = new Scalar(0, 255, 255);
+        Scalar lowerYellow2 = new Scalar(0, 52, 175);
+        Scalar upperYellow2 = new Scalar(0, 255, 255);
 
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Mat mask1 = new Mat();
+        Mat mask2 = new Mat();
+        Mat mask  = new Mat();
+        Mat edge  = new Mat();
 
-        double maxArea = -1;
-        MatOfPoint maxContour = null;
+        Core.inRange(hsv, lowerYellow1, upperYellow1, mask1);
+        Core.inRange(hsv, lowerYellow2, upperYellow2, mask2);
 
-        for (MatOfPoint contour : contours) {
-            double area = Imgproc.contourArea(contour);
+        // mask 더하기
+        // 근데 python에선 mask = mask1 + mask2로 돼있어 맞는지 모름
+        Core.add(mask1, mask2, mask);
+        Imgproc.Canny(mask, edge, 150, 300);
 
-            if (area > maxArea) {
-                maxArea = area;
-                maxContour = contour;
-            }
-        }
+        // 엣지를 비트맵으로 바꿔 반환
+        Utils.matToBitmap(edge, bitmap);
+        return bitmap;
+    }
 
-        Bitmap resBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(resBitmap);
-        canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+    public boolean DrawLines(Mat image, Mat lines, Scalar color, float thickness) {
+        if (lines == this.oldLines || lines.empty())
+            return false;
 
-        if (maxContour != null) {
-            Moments moments = Imgproc.moments(maxContour);
-            double centerX = moments.m10 / moments.m00;
-            double centerY = moments.m01 / moments.m00;
+        this.oldLines = lines;
+        return true;
+    }
 
-            Paint paint = new Paint();
-            paint.setColor(0xFF0000FF);
-            paint.setStrokeWidth(2);
-            paint.setStyle(Paint.Style.STROKE);
+    public boolean HoughLines(Bitmap bitmap,
+                              double rho,
+                              double theta,
+                              int    threshold,
+                              double minLineLen,
+                              double maxLineGap) {
+        Mat image = new Mat();
+        Mat lines = new Mat();
 
-            List<Point> contourPoints = maxContour.toList();
-            Point prevPoint = contourPoints.get(contourPoints.size() - 1);
+        Utils.bitmapToMat(bitmap, image);
 
-            for (Point point : contourPoints) {
-                canvas.drawLine((float) prevPoint.x, (float) prevPoint.y, (float) point.x,
-                        (float) point.y, paint);
-                prevPoint = point;
-            }
-        }
+        Imgproc.HoughLinesP(image, lines, rho, theta, threshold,
+                minLineLen, maxLineGap);
 
-        rgba.release();
-        hsv.release();
-        mask.release();
-        hierarchy.release();
+        if (lines.empty())
+            return false;
 
-        if (maxContour == null)
-            throw new Exception();
+        Mat lineImg = new Mat(image.rows(), image.cols(), CvType.CV_8UC3);
+        return DrawLines(lineImg, lines, new Scalar(0, 255, 0), 5);
+    }
 
-        return resBitmap;
+    public void LineDetecting(Bitmap bitmap, Vibrator vibrator) {
+        boolean isDetect = this.HoughLines(bitmap, 2.0, Math.PI/180,
+                90, 120, 150);
+
+        if (isDetect)
+            vibrator.vibrate(VibrationEffect.createOneShot(300, 100));
     }
 }
