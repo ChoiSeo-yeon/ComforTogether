@@ -72,13 +72,56 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
+        android:id="@+id/sound_onoff_btn"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:textAlignment="center"
         android:orientation="horizontal">
+
+        <soup.neumorphism.NeumorphCardView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/bmi_button"
+            app:neumorph_shapeType="flat"
+            tools:layout_editor_absoluteX="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/black"
+                        android:textSize="30dp"
+                        android:text="음성 장애물 감지 모드"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:includeFontPadding="false"
+                        android:textColor="#FFB202"
+                        android:textSize="40sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </soup.neumorphism.NeumorphCardView>
         <Button
-            android:id="@+id/sound_onoff_btn"
+            android:visibility="gone"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

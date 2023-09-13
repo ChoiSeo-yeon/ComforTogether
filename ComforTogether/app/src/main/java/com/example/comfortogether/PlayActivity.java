@@ -37,6 +37,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.opencv.android.Utils;
@@ -74,7 +75,7 @@ public class PlayActivity extends AppCompatActivity {
     Button sound_btn;
     Button vibration_btn;
     Button ml_brn;
-    Button sound_onoff_btn;
+    LinearLayout sound_onoff_btn;
 
     MediaPlayer mediaPlayer;
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
