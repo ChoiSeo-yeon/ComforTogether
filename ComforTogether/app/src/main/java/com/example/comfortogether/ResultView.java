@@ -54,7 +54,6 @@ public class ResultView extends View {
         int person_3check = 0;
         for (int i=0;i<mResults.size();i++){
             if(PrePostProcessor.mClasses[mResults.get(i).classIndex].equals("person")){
-                Log.d("asdf", "person detected num : " + person_3check);
                 person_3check++;
             }
         }
@@ -66,7 +65,7 @@ public class ResultView extends View {
 
             if(PrePostProcessor.mClasses[result.classIndex].contains("person")){
                 if(person_3check >= 3) {
-                    Log.d("asdf", "person detected : " + PrePostProcessor.mClasses[result.classIndex]);
+                    playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
                 }
             }else{
                 playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
