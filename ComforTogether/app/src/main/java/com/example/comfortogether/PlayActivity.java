@@ -208,13 +208,8 @@ public class PlayActivity extends AppCompatActivity {
                     } catch (Exception e){
                         e.printStackTrace();
                     }
-                    try {
-                        Bitmap lineBitmap = mlineDetecter.DetectingLine(mBitmap);
-                        lineImgView.setImageBitmap(lineBitmap);
-                        lineImgView.setVisibility(View.VISIBLE);
-                    } catch (Exception e) {
-                        lineImgView.setVisibility(View.INVISIBLE);
-                    }
+
+                    mlineDetecter.LineDetecting(mBitmap, (Vibrator) getSystemService(VIBRATOR_SERVICE));
                 }
             }
         }
