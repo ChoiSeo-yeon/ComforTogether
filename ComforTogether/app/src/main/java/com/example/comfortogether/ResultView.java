@@ -6,10 +6,12 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.example.comfortogether.PlayActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -49,15 +51,28 @@ public class ResultView extends View {
         super.onDraw(canvas);
 
         if (mResults == null) return;
+        int person_3check = 0;
+        for (int i=0;i<mResults.size();i++){
+            if(PrePostProcessor.mClasses[mResults.get(i).classIndex].equals("person")){
+                Log.d("asdf", "person detected num : " + person_3check);
+                person_3check++;
+            }
+        }
+
         for (Result result : mResults) {
 
             if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
                 continue;
 
-            if(Arrays.asList(labelFilter).contains("person")){
-                System.out.println("PERSON");
+            if(PrePostProcessor.mClasses[result.classIndex].contains("person")){
+                if(person_3check >= 3) {
+                    Log.d("asdf", "person detected : " + PrePostProcessor.mClasses[result.classIndex]);
+                }
+            }else{
+                playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
             }
-            playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
+
+
 
             mPaintRectangle.setStrokeWidth(5);
             mPaintRectangle.setStyle(Paint.Style.STROKE);
