@@ -10,12 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    RelativeLayout go_play_btn;
-    RelativeLayout go_tuto_btn;
+    LinearLayout go_play_btn;
+    LinearLayout go_tuto_btn;
 
     MediaPlayer main_mediaPlayer;
     boolean is_playing;

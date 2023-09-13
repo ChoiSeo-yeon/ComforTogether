@@ -53,6 +53,10 @@ public class ResultView extends View {
 
             if (Arrays.asList(labelFilter).contains(PrePostProcessor.mClasses[result.classIndex]) == false)
                 continue;
+
+            if(Arrays.asList(labelFilter).contains("person")){
+                System.out.println("PERSON");
+            }
             playActivity.tts_label(PrePostProcessor.mClasses[result.classIndex],this.sound_is);
 
             mPaintRectangle.setStrokeWidth(5);
