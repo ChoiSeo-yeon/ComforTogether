@@ -41,7 +41,7 @@ public class LineDetecter {
         }
     }
 
-    public Bitmap DetectingLine(@NonNull Bitmap bitmap) {
+    public boolean DetectingLine(@NonNull Bitmap bitmap) {
         Mat frame = new Mat();
         Utils.bitmapToMat(bitmap, frame);
 
@@ -52,28 +52,17 @@ public class LineDetecter {
         Mat hsv = new Mat();
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
 
-        // 라인 디텍팅
-        Scalar lowerYellow1 = new Scalar(0, 52, 175);
-        Scalar upperYellow1 = new Scalar(0, 255, 255);
-        Scalar lowerYellow2 = new Scalar(0, 52, 175);
-        Scalar upperYellow2 = new Scalar(0, 255, 255);
+        // 노란색 범위 설정
+        Scalar lowerYellow1 = new Scalar(20, 100, 100);  // 노란색 범위 최소값
+        Scalar upperYellow1 = new Scalar(30, 255, 255);  // 노란색 범위 최대값
 
-        Mat mask1 = new Mat();
-        Mat mask2 = new Mat();
-        Mat mask  = new Mat();
-        Mat edge  = new Mat();
+        // 노란색 범위에 해당하는 부분만 마스크 생성
+        Mat mask = new Mat();
+        Core.inRange(hsv, lowerYellow1, upperYellow1, mask);
 
-        Core.inRange(hsv, lowerYellow1, upperYellow1, mask1);
-        Core.inRange(hsv, lowerYellow2, upperYellow2, mask2);
-
-        // mask 더하기
-        // 근데 python에선 mask = mask1 + mask2로 돼있어 맞는지 모름
-        Core.add(mask1, mask2, mask);
-        Imgproc.Canny(mask, edge, 150, 300);
-
-        // 엣지를 비트맵으로 바꿔 반환
-        Utils.matToBitmap(edge, bitmap);
-        return bitmap;
+        // 노란색 선이 감지되었는지 확인
+        int nonZeroCount = Core.countNonZero(mask);
+        return nonZeroCount > 0;
     }
 
     public boolean DrawLines(Mat image, Mat lines, Scalar color, float thickness) {
