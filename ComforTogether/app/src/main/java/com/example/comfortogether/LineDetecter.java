@@ -90,12 +90,14 @@ public class LineDetecter {
                               int    threshold,
                               double minLineLen,
                               double maxLineGap) {
-        Mat image = new Mat();
-        Mat lines = new Mat();
+        Mat image     = new Mat();
+        Mat grayImage = new Mat();
+        Mat lines     = new Mat();
 
         Utils.bitmapToMat(bitmap, image);
 
-        Imgproc.HoughLinesP(image, lines, rho, theta, threshold,
+        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.HoughLinesP(grayImage, lines, rho, theta, threshold,
                 minLineLen, maxLineGap);
 
         if (lines.empty())
