@@ -81,7 +81,6 @@ public class PlayActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 1234;
     private TextureView mTextureView;
     private ResultView resultView;
-    private ImageView lineImgView;
 
     private CameraDevice mCamera;
     private Size mPreviewSize;
@@ -131,7 +130,6 @@ public class PlayActivity extends AppCompatActivity {
         sound_onoff_btn = findViewById(R.id.sound_onoff_btn);
         ml_brn = findViewById(R.id.ml_brn);
         resultView = findViewById(R.id.rView);
-        lineImgView = findViewById(R.id.lineImage);
 
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -214,7 +212,7 @@ public class PlayActivity extends AppCompatActivity {
 
                     Log.d("Line", "is Detect is " + isDetect);
 
-                    if (isDetect)
+                    if (!isDetect)
                         PlayVibration(300, 100);
                 }
             }
@@ -298,7 +296,6 @@ public class PlayActivity extends AppCompatActivity {
                     }
                 }
                 if(is>=3){
-                    //화면 돌아감요
                     Log.d("화면","돌아감");
                 }else{
                     Log.d("화면","안 돌아감");
@@ -349,23 +346,12 @@ public class PlayActivity extends AppCompatActivity {
                 PlayVibration(1000, 100);
                 break;
 
-            case R.id.ml_brn:
-                //PlayML();
-                break;
-
             case R.id.sound_onoff_btn:
-                //sy 황성민 ttl
-                //sound_onoff = !sound_onoff;
-                //mBitmap = mTextureView.getBitmap();
-                //grayscale(mBitmap);
-
                 if (sound_onoff == false) {
                     sound_onoff = true;
-                    //sy PlaySound(); // "음성 장애물 감지 모드가 활성화 되었습니다."
                     PlaySound(R.raw.play_sound1, true);
                 } else {
                     sound_onoff = false;
-                    //sy PlaySound(); // "음성 장애물 감지 모드가 비 활성화 되었습니다."
                     PlaySound(R.raw.play_sound2, true);
                 }
                 resultView.Sound_swich();
@@ -399,8 +385,6 @@ public class PlayActivity extends AppCompatActivity {
 
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-                // 화면 갱신시마다 불림
-//                Log.e("cklee", "MMM onSurfaceTextureUpdated");
             }
         });
     }
@@ -421,17 +405,9 @@ public class PlayActivity extends AppCompatActivity {
             Size[] sizesForStream = map.getOutputSizes(SurfaceTexture.class);
             Log.e("cklee", "MMM sizesForStream = " + Arrays.deepToString(sizesForStream));
 
-            // 가장 큰 사이즈부터 들어있다
             mPreviewSize = sizesForStream[0];
 
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             manager.openCamera(oneCameraId, new CameraDevice.StateCallback() {
@@ -574,9 +550,6 @@ public class PlayActivity extends AppCompatActivity {
         // This work only for android 4.4+
         if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(flags);
-            // Code below is to handle presses of Volume up or Volume down.
-            // Without this, after pressing volume buttons, the navigation bar will
-            // show up and won't hide
             final View decorView = getWindow().getDecorView();
             decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                 @Override
@@ -587,58 +560,11 @@ public class PlayActivity extends AppCompatActivity {
                 }
             });
         }
-        // Status bar, Navigation Bar Hide
 
         View decorView = getWindow().getDecorView();
-        // Hide both the navigation bar and the status bar.
-        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-        // a general rule, you should design your app to hide the status bar whenever you
-        // hide the navigation bar.
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
     }
 }
-
-
-
-    /*
-    private void PlayML() {
-        mBitmap = mTextureView.getBitmap();
-
-        mImgScaleX = (float)mBitmap.getWidth() / PrePostProcessor.mInputWidth;
-        mImgScaleY = (float)mBitmap.getHeight() / PrePostProcessor.mInputHeight;
-
-        mIvScaleX = (mBitmap.getWidth() > mBitmap.getHeight() ? (float)mTextureView.getWidth() / mBitmap.getWidth() : (float)mTextureView.getHeight() / mBitmap.getHeight());
-        mIvScaleY  = (mBitmap.getHeight() > mBitmap.getWidth() ? (float)mTextureView.getHeight() / mBitmap.getHeight() : (float)mTextureView.getWidth() / mBitmap.getWidth());
-
-        mStartX = (mTextureView.getWidth() - mIvScaleX * mBitmap.getWidth())/2;
-        mStartY = (mTextureView.getHeight() -  mIvScaleY * mBitmap.getHeight())/2;
-
-        mStartX = (mBitmap.getWidth()  - mIvScaleX * mBitmap.getWidth())  / 2;
-        mStartY = (mBitmap.getHeight() - mIvScaleY * mBitmap.getHeight()) / 2;
-
-        Thread thread = new Thread(PlayActivity.this);
-        thread.start();
-    }
-
-
-    @Override
-    public void run() {
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
-        final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
-        IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
-        final Tensor outputTensor = outputTuple[0].toTensor();
-        final float[] outputs = outputTensor.getDataAsFloatArray();
-        final ArrayList<Result> results = PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
-
-        runOnUiThread(() -> {
-            resultView.setResults(results);
-            resultView.invalidate();
-            resultView.setVisibility(View.VISIBLE);
-            System.out.println("Thread run done");
-        });
-<<<<<<< Updated upstream
-    }
-     */
 
