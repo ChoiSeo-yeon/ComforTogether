@@ -210,7 +210,13 @@ public class PlayActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    mlineDetecter.LineDetecting(mBitmap, (Vibrator) getSystemService(VIBRATOR_SERVICE));
+                    boolean isDetect = mlineDetecter.HoughLines(mBitmap, 2.0, Math.PI/180,
+                            90, 120, 150);
+
+                    Log.d("Line", "is Detect is " + isDetect);
+
+                    if (isDetect)
+                        PlayVibration(300, 100);
                 }
             }
         }
