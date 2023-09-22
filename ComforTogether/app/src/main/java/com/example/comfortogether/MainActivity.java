@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         go_play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PlaySound(R.raw.play_btnclick_sound); //sy 황성민 ttl 실행버튼눌렀을때 ttl
+                PlaySound(R.raw.play_btnclick_sound);
                 try {
                     Thread.sleep(3500);
                 } catch (InterruptedException e) {

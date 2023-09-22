@@ -131,6 +131,21 @@ public class PlayActivity extends AppCompatActivity {
         ml_brn = findViewById(R.id.ml_brn);
         resultView = findViewById(R.id.rView);
 
+        sound_onoff_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sound_onoff == false) {
+                    sound_onoff = true;
+                    PlaySound(R.raw.play_sound1, true);
+                } else {
+                    sound_onoff = false;
+                    PlaySound(R.raw.play_sound2, true);
+                }
+                resultView.Sound_swich();
+                Log.d("sound", "sount_onoff:" + sound_onoff);
+            }
+        });
+
         // 카메라 권한 체크
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -266,7 +281,7 @@ public class PlayActivity extends AppCompatActivity {
             double[] persent = new double[256];
             for (int i = 0; i < iHistData.length; i++) {
                 persent[i] = (iHistData[i]/sum)*100;
-                Log.d("HISTOGRAM","HIST Date : " + i + " : " + persent[i]);
+                //Log.d("HISTOGRAM","HIST Date : " + i + " : " + persent[i]);
             }
 
             for (int i = 0; i < 255; i++) {
@@ -346,17 +361,17 @@ public class PlayActivity extends AppCompatActivity {
                 PlayVibration(1000, 100);
                 break;
 
-            case R.id.sound_onoff_btn:
-                if (sound_onoff == false) {
-                    sound_onoff = true;
-                    PlaySound(R.raw.play_sound1, true);
-                } else {
-                    sound_onoff = false;
-                    PlaySound(R.raw.play_sound2, true);
-                }
-                resultView.Sound_swich();
-                Log.d("sound", "sount_onoff:" + sound_onoff);
-                break;
+            //case R.id.sound_onoff_btn:
+            //    if (sound_onoff == false) {
+            //        sound_onoff = true;
+            //        PlaySound(R.raw.play_sound1, true);
+            //    } else {
+            //        sound_onoff = false;
+            //        PlaySound(R.raw.play_sound2, true);
+            //    }
+            //    resultView.Sound_swich();
+            //    Log.d("sound", "sount_onoff:" + sound_onoff);
+            //    break;
 
             default:
                 break;
