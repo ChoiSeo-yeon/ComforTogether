@@ -94,6 +94,9 @@ public class PlayActivity extends AppCompatActivity {
     public boolean sound_onoff = false;
     private static Context acontext;
 
+    public int line_detect_count = 0;
+    public int line_not_detect_count = 0;
+
     public static String assetFilePath(Context context, String assetName) throws IOException {
 
         acontext = context;
@@ -227,8 +230,21 @@ public class PlayActivity extends AppCompatActivity {
 
                     Log.d("Line", "is Detect is " + isDetect);
 
-                    if (!isDetect)
-                        PlayVibration(300, 100);
+                    if (!isDetect){
+                        line_not_detect_count = 0;
+                        if(line_detect_count == 2){
+                            PlayVibration(800, 255);
+                        }
+                        line_detect_count++;
+                    }else{
+                        line_detect_count = 0;
+                        if(line_not_detect_count < 3){
+                            PlayVibration(800, 255);
+                        }
+                        line_not_detect_count++;
+                    }
+
+                    Log.d("isDetect","Line Detect : "+ line_detect_count + " , Line Not Detect : "+line_not_detect_count);
                 }
             }
         }
