@@ -14,27 +14,35 @@
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ComforTogether"
+        android:text="What's"
         android:textStyle="bold"
         android:textSize="40dp"
         android:gravity="center_horizontal"
         android:textColor="#FFC400"/>
 
-    <ImageView
-        android:id="@+id/tutorial_iv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_weight="2"
+        android:padding="5dp"
         android:paddingHorizontal="20dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/app_logo"
-        android:layout_weight="3"/>
+        android:layout_marginTop="30dp">
+        <ImageView
+            android:id="@+id/tutorial_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/app_logo"/>
+    </LinearLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/tutorial_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:gravity="center_horizontal|bottom"
         android:layout_weight="2"
         >
@@ -66,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:textColor="@color/black"
-                        android:textSize="23dp"
+                        android:textSize="20dp"
                         android:text="흰 지팡이를 사용하더라도 움직이는 물체와 공중에 떠있는 물체는 확인하기 어렵습니다. \n이런 상황속에서 핸드폰과 카메라만을 통하여 사용하도록 제작하였습니다."
                         android:textStyle="normal" />
 

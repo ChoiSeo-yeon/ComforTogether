@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhatS</string>
+    <string name="app_name">What\'s</string>
 
     <!-- 배경 -->
     <color name="bg_color">#FFAD03</color>
