@@ -67,12 +67,12 @@ public class TutorialActivity extends AppCompatActivity {
         };
 
         int[] tuto_img = {
-                R.drawable.tuto_img2,
+                R.drawable.app_logo,
                 R.drawable.tuto_img2,
                 R.drawable.tuto_img3,
                 R.drawable.tuto_img4,
                 R.drawable.tuto_img5,
-                R.drawable.tuto_img5,
+                R.drawable.app_logo,
         };
 
         tutorial_rl.setOnClickListener(new View.OnClickListener() {
