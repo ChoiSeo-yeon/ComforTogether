@@ -83,7 +83,6 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@+id/bmi_button"
             app:neumorph_shapeType="flat"
             tools:layout_editor_absoluteX="10dp">
 

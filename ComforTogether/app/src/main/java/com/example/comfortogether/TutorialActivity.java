@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.List;
 
 public class TutorialActivity extends AppCompatActivity {
+    ImageView tutorial_iv;
     RelativeLayout tutorial_rl;
     TextView tutorial_tv;
     TextView tuto_title;
@@ -40,6 +42,7 @@ public class TutorialActivity extends AppCompatActivity {
         hide_statusbar_navigationbar();
         setContentView(R.layout.activity_tutorial);
 
+        tutorial_iv = findViewById(R.id.tutorial_iv);
         tutorial_rl = findViewById(R.id.tutorial_rl);
         tutorial_tv = findViewById(R.id.tutorial_tv);
         tuto_title = findViewById(R.id.tutorial_ti);
@@ -63,10 +66,20 @@ public class TutorialActivity extends AppCompatActivity {
                 "[ 튜토리얼 완료 ]"
         };
 
+        int[] tuto_img = {
+                R.drawable.tuto_img2,
+                R.drawable.tuto_img2,
+                R.drawable.tuto_img3,
+                R.drawable.tuto_img4,
+                R.drawable.tuto_img5,
+                R.drawable.tuto_img5,
+        };
+
         tutorial_rl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(tuto_num < 6){
+                    tutorial_iv.setImageResource(tuto_img[tuto_num]);
                     tutorial_tv.setText(tuto_string[tuto_num]);
                     tuto_title.setText(tuto_title_string[tuto_num]);
                     PlaySound(tuto_mp3[tuto_num]);

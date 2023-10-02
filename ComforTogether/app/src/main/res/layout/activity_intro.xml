@@ -9,8 +9,8 @@
         android:id="@+id/intro_iv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/intro_img"
-        android:scaleType="centerCrop"/>
+        android:src="@drawable/intro_img2"
+        android:scaleType="centerInside"/>
 
     <TextView
         android:visibility="gone"

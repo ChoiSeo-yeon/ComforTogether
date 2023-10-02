@@ -239,7 +239,7 @@ public class PlayActivity extends AppCompatActivity {
                     }else{
                         line_detect_count = 0;
                         if(line_not_detect_count < 3){
-                            PlayVibration(800, 255);
+                            PlayVibration(400, 130);
                         }
                         line_not_detect_count++;
                     }

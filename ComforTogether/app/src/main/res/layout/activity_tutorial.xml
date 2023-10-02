@@ -20,6 +20,15 @@
         android:gravity="center_horizontal"
         android:textColor="#FFC400"/>
 
+    <ImageView
+        android:id="@+id/tutorial_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/tuto_img2"
+        android:layout_weight="3"/>
+
     <RelativeLayout
         android:id="@+id/tutorial_rl"
         android:layout_width="match_parent"
@@ -27,6 +36,7 @@
         android:paddingHorizontal="20dp"
         android:layout_marginTop="30dp"
         android:gravity="center_horizontal|bottom"
+        android:layout_weight="2"
         >
 
         <soup.neumorphism.NeumorphCardView
@@ -34,7 +44,6 @@
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@+id/bmi_button"
             app:neumorph_shapeType="flat"
             tools:layout_editor_absoluteX="10dp">
 
