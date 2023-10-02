@@ -67,7 +67,7 @@ public class TutorialActivity extends AppCompatActivity {
         };
 
         int[] tuto_img = {
-                R.drawable.app_logo,
+                R.drawable.tuto_img2,
                 R.drawable.tuto_img2,
                 R.drawable.tuto_img3,
                 R.drawable.tuto_img4,
